@@ -3,6 +3,7 @@ package com.jhops10.devfinder.controller;
 import com.jhops10.devfinder.dto.DeveloperRequestDTO;
 import com.jhops10.devfinder.dto.DeveloperResponseDTO;
 import com.jhops10.devfinder.service.DeveloperService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class DeveloperController {
     private final DeveloperService developerService;
 
     @PostMapping
-    public ResponseEntity<DeveloperResponseDTO> createDeveloper(@RequestBody DeveloperRequestDTO dto) {
+    public ResponseEntity<DeveloperResponseDTO> createDeveloper(@RequestBody @Valid DeveloperRequestDTO dto) {
         DeveloperResponseDTO response = developerService.createDeveloper(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
