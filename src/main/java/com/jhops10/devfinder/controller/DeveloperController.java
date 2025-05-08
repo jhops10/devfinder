@@ -43,4 +43,9 @@ public class DeveloperController {
     public ResponseEntity<List<DeveloperResponseDTO>> getDevelopersByLocation(@RequestParam String location) {
         return ResponseEntity.ok(developerService.getDevelopersByLocation(location));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<DeveloperResponseDTO> update(@PathVariable("id") String id, @RequestBody @Valid DeveloperRequestDTO dto) {
+        return ResponseEntity.ok(developerService.updateDeveloper(id, dto));
+    }
 }
