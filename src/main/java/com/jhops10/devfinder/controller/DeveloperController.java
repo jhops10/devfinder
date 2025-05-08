@@ -28,4 +28,19 @@ public class DeveloperController {
     public ResponseEntity<List<DeveloperResponseDTO>> getAll() {
         return ResponseEntity.ok(developerService.getAll());
     }
+
+    @GetMapping("/available")
+    public ResponseEntity<List<DeveloperResponseDTO>> getAvailableDevelopers() {
+        return ResponseEntity.ok(developerService.getAvailableDevelopers());
+    }
+
+    @GetMapping("/skill")
+    public ResponseEntity<List<DeveloperResponseDTO>> getDevelopersBySkill(@RequestParam String skill) {
+        return ResponseEntity.ok(developerService.getDevelopersBySkill(skill));
+    }
+
+    @GetMapping("/location")
+    public ResponseEntity<List<DeveloperResponseDTO>> getDevelopersByLocation(@RequestParam String location) {
+        return ResponseEntity.ok(developerService.getDevelopersByLocation(location));
+    }
 }
