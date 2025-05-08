@@ -48,4 +48,10 @@ public class GlobalExceptionHandler {
         response.put("message", "Internal server error");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+
+    @ExceptionHandler(DeveloperNotFoundException.class)
+    public ResponseEntity<Object> handleDeveloperNotFoundException(DeveloperNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse("Desenvolvedor não encontrado!", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
 }
