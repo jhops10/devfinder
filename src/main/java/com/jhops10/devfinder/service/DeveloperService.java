@@ -35,13 +35,33 @@ public class DeveloperService {
 
     }
 
+    public List<DeveloperResponseDTO> getAvailableDevelopers() {
+        return developerRepository.findByAvailableTrue()
+                .stream()
+                .map(this::mapToResponseDTO)
+                .toList();
+    }
+
+    public List<DeveloperResponseDTO> getDevelopersBySkill(String skill) {
+        return developerRepository.findBySkillsContainingIgnoreCase(skill)
+                .stream()
+                .map(this::mapToResponseDTO)
+                .toList();
+    }
+
+    public List<DeveloperResponseDTO> getDevelopersByLocation(String location) {
+        return developerRepository.findByLocationIgnoreCase(location)
+                .stream()
+                .map(this::mapToResponseDTO)
+                .toList();
+    }
+
     public List<DeveloperResponseDTO> getAll() {
         return developerRepository.findAll()
                 .stream()
                 .map(this::mapToResponseDTO)
                 .toList();
     }
-
 
 
     private DeveloperResponseDTO mapToResponseDTO(Developer developer) {
