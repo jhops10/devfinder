@@ -67,7 +67,7 @@ public class DeveloperService {
 
     public DeveloperResponseDTO updateDeveloper(String id, DeveloperRequestDTO dto) {
         Developer existing = developerRepository.findById(id)
-                .orElseThrow(() -> new DeveloperNotFoundException("Desenvolvedor não encontrado"));
+                .orElseThrow(() -> new DeveloperNotFoundException("Desenvolvedor com id: " + id + " não encontrado."));
 
         existing.setName(dto.getName());
         existing.setEmail(dto.getEmail());
@@ -79,6 +79,13 @@ public class DeveloperService {
 
         Developer updated = developerRepository.save(existing);
         return mapToResponseDTO(updated);
+    }
+
+    public void deleteDeveloper(String id) {
+        Developer dev = developerRepository.findById(id)
+                .orElseThrow(() -> new DeveloperNotFoundException("Desenvolvedor com id: " + id + " não encontrado."));
+
+        developerRepository.delete(dev);
     }
 
     private DeveloperResponseDTO mapToResponseDTO(Developer developer) {
