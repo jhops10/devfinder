@@ -48,4 +48,10 @@ public class DeveloperController {
     public ResponseEntity<DeveloperResponseDTO> update(@PathVariable("id") String id, @RequestBody @Valid DeveloperRequestDTO dto) {
         return ResponseEntity.ok(developerService.updateDeveloper(id, dto));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") String id) {
+        developerService.deleteDeveloper(id);
+        return ResponseEntity.noContent().build();
+    }
 }
