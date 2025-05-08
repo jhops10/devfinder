@@ -5,9 +5,11 @@ import com.jhops10.devfinder.domain.Project;
 import com.jhops10.devfinder.dto.DeveloperRequestDTO;
 import com.jhops10.devfinder.dto.DeveloperResponseDTO;
 import com.jhops10.devfinder.dto.ProjectDTO;
+import com.jhops10.devfinder.exception.DeveloperNotFoundException;
 import com.jhops10.devfinder.repository.DeveloperRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
 import java.util.List;
@@ -63,6 +65,28 @@ public class DeveloperService {
                 .toList();
     }
 
+    public DeveloperResponseDTO updateDeveloper(String id, DeveloperRequestDTO dto) {
+        Developer existing = developerRepository.findById(id)
+                .orElseThrow(() -> new DeveloperNotFoundException("Desenvolvedor com id: " + id + " não encontrado."));
+
+        existing.setName(dto.getName());
+        existing.setEmail(dto.getEmail());
+        existing.setLocation(dto.getLocation());
+        existing.setSkills(dto.getSkills());
+        existing.setBio(dto.getBio());
+        existing.setAvailable(dto.getAvailable());
+        existing.setProjects(mapToProjects(dto.getProjects()));
+
+        Developer updated = developerRepository.save(existing);
+        return mapToResponseDTO(updated);
+    }
+
+    public void deleteDeveloper(String id) {
+        Developer dev = developerRepository.findById(id)
+                .orElseThrow(() -> new DeveloperNotFoundException("Desenvolvedor com id: " + id + " não encontrado."));
+
+        developerRepository.delete(dev);
+    }
 
     private DeveloperResponseDTO mapToResponseDTO(Developer developer) {
         return DeveloperResponseDTO.builder()
