@@ -5,6 +5,7 @@ import com.jhops10.devfinder.domain.Project;
 import com.jhops10.devfinder.dto.DeveloperRequestDTO;
 import com.jhops10.devfinder.dto.DeveloperResponseDTO;
 import com.jhops10.devfinder.dto.ProjectDTO;
+import com.jhops10.devfinder.exception.DeveloperNotFoundException;
 import com.jhops10.devfinder.repository.DeveloperRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -172,6 +174,65 @@ class DeveloperServiceTest {
 
         verify(developerRepository).findAll();
 
+    }
+
+    @Test
+    void updateDeveloper_shouldUpdateDeveloperSuccessfully() {
+        DeveloperRequestDTO requestDTO = DeveloperRequestDTO.builder()
+                .name("New Name")
+                .email("newemail@email.com")
+                .location("New Location")
+                .skills(defaultDeveloper.getSkills())
+                .bio("New Bio")
+                .available(defaultDeveloper.getAvailable())
+                .projects(List.of(new ProjectDTO("Project1", "http://url.com", "Descrição")))
+                .build();
+
+       when(developerRepository.findById("id-for-update")).thenReturn(Optional.of(defaultDeveloper));
+       when(developerRepository.save(any(Developer.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+       DeveloperResponseDTO sut = developerService.updateDeveloper("id-for-update", requestDTO);
+
+       assertEquals("New Name", sut.getName());
+       assertEquals("newemail@email.com", sut.getEmail());
+       assertEquals("New Location", sut.getLocation());
+       assertEquals("New Bio", sut.getBio());
+
+       verify(developerRepository).findById("id-for-update");
+       verify(developerRepository).save(any(Developer.class));
+
+    }
+
+    @Test
+    void updateDeveloper_whenDeveloperIdIsNotFound_shouldThrowException() {
+        DeveloperRequestDTO dto = new DeveloperRequestDTO();
+
+        when(developerRepository.findById("id-for-update")).thenReturn(Optional.empty());
+
+        assertThrows(DeveloperNotFoundException.class, () -> developerService.updateDeveloper("id-for-update", dto));
+
+        verify(developerRepository).findById("id-for-update");
+        verifyNoMoreInteractions(developerRepository);
+    }
+
+    @Test
+    void deleteDeveloper_shouldDeleteDeveloperSuccessfully() {
+        when(developerRepository.findById("id-for-delete")).thenReturn(Optional.of(defaultDeveloper));
+
+        developerService.deleteDeveloper("id-for-delete");
+
+        verify(developerRepository).findById("id-for-delete");
+        verify(developerRepository).delete(defaultDeveloper);
+    }
+
+    @Test
+    void deleteDeveloper_whenDeveloperIdIsNotFound_shouldThrowException() {
+        when(developerRepository.findById("invalid-id")).thenReturn(Optional.empty());
+
+        assertThrows(DeveloperNotFoundException.class, () -> developerService.deleteDeveloper("invalid-id"));
+
+        verify(developerRepository).findById("invalid-id");
+        verifyNoMoreInteractions(developerRepository);
     }
 
     private Developer createDeveloper(String id, String name, boolean available) {
